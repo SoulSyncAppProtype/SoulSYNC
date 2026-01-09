@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>SoulSync | The Matriarch's Flow</title>
+    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+    <style>
+        @import url('[https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700;900&display=swap](https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700;900&display=swap)');
+        :root { --bg-deep: #020617; --electric-cyan: #22d3ee; --gold: #d4af37; }
+        body { background-color: var(--bg-deep); color: #f8fafc; font-family: 'Space Grotesk', sans-serif; overflow: hidden; touch-action: manipulation; }
+        .aura-bg { position: fixed; inset: 0; background: radial-gradient(circle at 10% 10%, rgba(34, 211, 238, 0.08) 0%, transparent 40%), #020617; z-index: -1; }
+        .glass { background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.06); }
+        .mirror-portal { width: 280px; height: 280px; margin: auto; border-radius: 50%; position: relative; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(212, 175, 55, 0.1); cursor: pointer; }
+        .scanner-ring { position: absolute; inset: -8px; border: 2px solid var(--gold); border-radius: 50%; clip-path: polygon(0 0, 40% 0, 40% 100%, 0 100%); animation: spin 4s linear infinite; }
+        #game-frame { position: fixed; inset: 0; z-index: 200; background: black; display: none; flex-direction: column; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <div class="aura-bg"></div>
+    <div id="game-frame">
+        <div class="p-4 flex justify-between items-center bg-slate-900 border-b border-white/10">
+            <span class="text-[0.6rem] font-bold text-cyan-400 tracking-widest uppercase">Calibration</span>
+            <button onclick="document.getElementById('game-frame').style.display='none'" class="text-white text-xs font-bold uppercase">Close [X]</button>
+        </div>
+        <iframe src="space_shooter.html" class="flex-1 w-full border-none"></iframe>
+    </div>
+    <div id="app-container" class="max-w-[430px] mx-auto h-screen flex flex-col">
+        <header class="px-8 pt-12 pb-4 flex justify-between items-center">
+            <div>
+                <p class="text-[0.6rem] font-black tracking-[0.4em] text-gold/80 uppercase mb-1">Matriarch Lineage</p>
+                <h1 class="text-3xl font-light text-white tracking-tighter">The Mirror</h1>
+            </div>
+            <button onclick="document.getElementById('game-frame').style.display='flex'" class="text-right">
+                <div class="text-[0.5rem] font-bold text-slate-500 uppercase">Calibrate</div>
+                <div class="text-xl font-light text-white">4.25%</div>
+            </button>
+        </header>
+        <main class="flex-1 flex flex-col px-8">
+            <div class="mirror-portal" onclick="alert('Lens Opening...')">
+                <div class="scanner-ring"></div>
+                <div class="text-center">
+                    <span class="text-[0.55rem] font-bold tracking-[0.5em] text-gold/60 uppercase">Initiate Ritual</span>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
