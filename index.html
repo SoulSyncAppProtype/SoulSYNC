@@ -1,3 +1,262 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>SoulSync | The Lineage Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700;900&display=swap');
+        
+        :root { 
+            --bg-deep: #020617; 
+            --electric-cyan: #22d3ee; 
+            --gold: #d4af37; 
+            --glass: rgba(15, 23, 42, 0.6);
+        }
 
-<html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"> <title>SoulSync | The Matriarch's Flow</title> <script src="https://cdn.tailwindcss.com"></script> <style> @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700;900&display=swap'); :root { --bg-deep: #020617; --electric-cyan: #22d3ee; --gold: #d4af37; } body { background-color: var(--bg-deep); color: #f8fafc; font-family: 'Space Grotesk', sans-serif; overflow: hidden; margin: 0; } .aura-bg { position: fixed; inset: 0; background: radial-gradient(circle at 10% 10%, rgba(34, 211, 238, 0.08) 0%, transparent 40%), radial-gradient(circle at 90% 90%, rgba(212, 175, 55, 0.05) 0%, transparent 40%), #020617; z-index: -1; } .glass { background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.06); } #app-container { max-width: 430px; margin: 0 auto; height: 100vh; display: flex; flex-direction: column; } .dock-wrapper { padding: 20px; padding-bottom: calc(env(safe-area-inset-bottom) + 20px); } .dock { display: flex; justify-content: space-around; padding: 14px; border-radius: 40px; } .dock-item { display: flex; flex-direction: column; align-items: center; gap: 4px; opacity: 0.3; transition: 0.4s; background: none; border: none; color: inherit; cursor: pointer; } .dock-item.active { opacity: 1; color: var(--electric-cyan); } .dock-item span { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; } .mirror-portal { width: 240px; height: 240px; margin: auto; border-radius: 50%; position: relative; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(212, 175, 55, 0.15); cursor: pointer; } .scanner-ring { position: absolute; inset: -8px; border: 2px solid var(--gold); border-radius: 50%; clip-path: polygon(0 0, 40% 0, 40% 100%, 0 100%); animation: spin 4s linear infinite; opacity: 0.6; } @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } .hidden { display: none !important; } #game-frame { position: fixed; inset: 0; z-index: 200; background: black; display: none; flex-direction: column; } .view-content { flex: 1; overflow-y: auto; padding-bottom: 20px; } </style> </head> <body> <div class="aura-bg"></div> <div id="game-frame"> <div class="p-4 flex justify-between items-center bg-slate-900 border-b border-white/10"> <span class="text-[0.6rem] font-bold text-cyan-400 tracking-widest uppercase">Calibration Protocol</span> <button onclick="closeGame()" class="text-white text-xs font-bold">EXIT [X]</button> </div> <iframe src="space_shooter.html" id="game-iframe" class="flex-1 w-full border-none"></iframe> </div> <div id="app-container"> <header class="px-8 pt-12 pb-4 flex justify-between items-center z-50"> <div> <p class="text-[0.6rem] font-black tracking-[0.4em] text-gold/80 uppercase">Matriarch Lineage</p> <h1 id="view-title" class="text-3xl font-light text-white tracking-tighter">The Mirror</h1> </div> <button onclick="openGame()" class="text-right"> <div class="text-[0.5rem] font-bold text-slate-500 uppercase">Equity</div> <div class="text-xl font-light text-white" id="equity-val">4.25%</div> </button> </header> <main id="burn-view" class="view-content flex flex-col px-8"> <div class="mirror-portal" onclick="digitalSummon()"> <div class="scanner-ring"></div> <div class="text-center"> <span class="text-[0.55rem] font-bold tracking-[0.5em] text-gold/60 uppercase">Initiate Ritual</span> </div> </div> <p class="mt-8 text-center text-[0.65rem] text-slate-400 italic px-6 leading-relaxed">Tap the portal to synchronize with the lineage and receive your insight.</p> </main> <main id="journal-view" class="view-content hidden px-8"><div class="pt-4 space-y-4" id="history-list"></div></main> <main id="plan-view" class="view-content hidden px-8"> <div class="pt-4 glass p-6 rounded-[32px] border-gold/20"> <h3 class="text-gold text-[0.6rem] font-black uppercase tracking-[0.2em] mb-4">Distribution Strategy</h3> <div class="space-y-4"> <div class="text-[0.55rem] uppercase font-bold text-slate-400">US Manufacturing: 45%</div> <div class="h-1 bg-slate-800 rounded-full"><div class="h-full bg-gold w-[45%]"></div></div> <div class="text-[0.55rem] uppercase font-bold text-slate-400">V2.0 Art Correction: 80%</div> <div class="h-1 bg-slate-800 rounded-full"><div class="h-full bg-cyan-400 w-[80%]"></div></div> </div> </div> </main> <div class="dock-wrapper"> <nav class="dock glass"> <button onclick="nav('burn')" class="dock-item active" id="btn-burn"><span>Mirror</span></button> <button onclick="nav('journal')" class="dock-item" id="btn-journal"><span>Journal</span></button> <button onclick="nav('plan')" class="dock-item" id="btn-plan"><span>Strategy</span></button> </nav> </div> </div> <script> let equity = 4.25; let records = []; const CARDS = ["The Matriarch of Gales", "The Sovereign Mother", "Golden Weave", "Silent Echo", "The First Seed"]; function nav(t) { document.querySelectorAll('main').forEach(m => m.classList.add('hidden')); document.getElementById(t + '-view').classList.remove('hidden'); document.querySelectorAll('.dock-item').forEach(i => i.classList.remove('active')); document.getElementById('btn-' + t).classList.add('active'); if (t === 'journal') renderJournal(); document.getElementById('view-title').innerText = t === 'burn' ? 'The Mirror' : t === 'journal' ? 'Journal' : 'Strategy'; } function openGame() { document.getElementById('game-frame').style.display = 'flex'; } function closeGame() { document.getElementById('game-frame').style.display = 'none'; } function digitalSummon() { equity += 0.01; document.getElementById('equity-val').innerText = equity.toFixed(2) + '%'; const card = CARDS[Math.floor(Math.random() * CARDS.length)]; records.unshift({ card, date: new Date().toLocaleTimeString(), insight: "The weave strengthens as you align with the matriarch's vision." }); nav('journal'); } function renderJournal() { const c = document.getElementById('history-list'); c.innerHTML = records.length ? records.map(r => &lt;div class=&quot;glass p-5 rounded-[28px] border-l-2 border-l-gold/40&quot;&gt; &lt;div class=&quot;text-[0.5rem] font-bold text-slate-500 uppercase mb-1&quot;&gt;${r.date}&lt;/div&gt; &lt;h4 class=&quot;text-lg font-bold text-white&quot;&gt;${r.card}&lt;/h4&gt; &lt;p class=&quot;text-[0.7rem] text-slate-300 italic mt-2&quot;&gt;&quot;${r.insight}&quot;&lt;/p&gt; &lt;/div&gt;).join('') : '<div class="py-20 text-center opacity-20 text-xs">NO RECORDS FOUND</div>'; } </script> </body> </html>
+        body { 
+            background-color: var(--bg-deep); 
+            color: #f8fafc; 
+            font-family: 'Space Grotesk', sans-serif; 
+            overflow: hidden; 
+            touch-action: manipulation; 
+            margin: 0;
+        }
+
+        .aura-bg { 
+            position: fixed; 
+            inset: 0; 
+            background: radial-gradient(circle at 10% 10%, rgba(34, 211, 238, 0.08) 0%, transparent 40%), #020617; 
+            z-index: -1; 
+        }
+
+        .glass { 
+            background: var(--glass); 
+            backdrop-filter: blur(25px); 
+            border: 1px solid rgba(255, 255, 255, 0.06); 
+        }
+
+        .mirror-portal { 
+            width: 260px; 
+            height: 260px; 
+            margin: auto; 
+            border-radius: 50%; 
+            position: relative; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            border: 1px solid rgba(212, 175, 55, 0.1); 
+            cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .mirror-portal:active { transform: scale(0.92); }
+
+        .scanner-ring { 
+            position: absolute; 
+            inset: -8px; 
+            border: 2px solid var(--gold); 
+            border-radius: 50%; 
+            clip-path: polygon(0 0, 40% 0, 40% 100%, 0 100%); 
+            animation: spin 4s linear infinite; 
+        }
+
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .dock {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1.5rem;
+            padding: 0.8rem 2rem;
+            border-radius: 99px;
+            z-index: 1000;
+            width: 90%;
+            max-width: 380px;
+            justify-content: space-around;
+        }
+
+        .dock-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0.4;
+            transition: 0.3s;
+            background: none;
+            border: none;
+            color: inherit;
+        }
+
+        .dock-item.active { opacity: 1; color: var(--electric-cyan); }
+        .dock-item span { font-size: 0.55rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
+
+        .hidden { display: none !important; }
+
+        #camera-overlay {
+            position: fixed;
+            inset: 0;
+            background: black;
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+        }
+
+        .shutter-btn {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            border: 4px solid white;
+            background: transparent;
+            margin-bottom: 30px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="aura-bg"></div>
+
+    <!-- Ritual Scan Overlay -->
+    <div id="camera-overlay">
+        <div class="p-6 flex justify-between items-center">
+            <span class="text-xs font-bold text-cyan-400 tracking-widest uppercase">Mirror Scan Active</span>
+            <button onclick="closeCamera()" class="text-white opacity-60 text-xs font-bold">CANCEL</button>
+        </div>
+        <div class="flex-1 relative mx-6 rounded-[40px] overflow-hidden border border-white/10 bg-slate-950">
+            <video id="video" class="w-full h-full object-cover" autoplay playsinline></video>
+            <div class="absolute inset-0 border-[2px] border-cyan-400/20 m-12 rounded-3xl"></div>
+        </div>
+        <div class="flex justify-center p-8">
+            <button class="shutter-btn" onclick="captureRitual()"></button>
+        </div>
+    </div>
+
+    <div id="app-container" class="max-w-[430px] mx-auto h-screen flex flex-col">
+        <header class="px-8 pt-12 pb-4 flex justify-between items-center">
+            <div>
+                <p class="text-[0.6rem] font-black tracking-[0.4em] text-gold/80 uppercase mb-1">SoulSync v1.0</p>
+                <h1 id="view-title" class="text-3xl font-light text-white tracking-tighter">The Mirror</h1>
+            </div>
+            <div class="text-right">
+                <div class="text-[0.5rem] font-bold text-slate-500 uppercase">Equity Sync</div>
+                <div id="equity-display" class="text-xl font-light text-white">4.25%</div>
+            </div>
+        </header>
+
+        <!-- ORACLE/MIRROR VIEW -->
+        <main id="view-mirror" class="flex-1 flex flex-col px-8">
+            <div class="flex-1 flex flex-col justify-center">
+                <div class="mirror-portal" onclick="openCamera()">
+                    <div class="scanner-ring"></div>
+                    <div class="text-center">
+                        <svg class="w-10 h-10 text-gold/40 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                        </svg>
+                        <span class="text-[0.55rem] font-bold tracking-[0.5em] text-gold/60 uppercase">Initiate Ritual</span>
+                    </div>
+                </div>
+                <p class="text-center text-[0.6rem] text-slate-500 mt-12 tracking-widest leading-relaxed uppercase">
+                    Align your physical artifact<br>to sync with the lineage.
+                </p>
+            </div>
+        </main>
+
+        <!-- VAULT VIEW -->
+        <main id="view-vault" class="hidden flex-1 flex flex-col px-8 pt-4">
+            <div class="glass p-6 rounded-[32px] mb-4 border-l-4 border-l-gold">
+                <span class="text-[0.5rem] font-bold text-slate-500 uppercase tracking-widest">Material Sovereignty</span>
+                <div class="text-3xl font-light mt-1 text-white">$14,250.82</div>
+                <div class="text-[0.6rem] text-emerald-400 font-bold mt-1 uppercase">+0.42% Since Sync</div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="glass p-5 rounded-[28px] border-l-2 border-l-cyan-400">
+                    <span class="text-[0.4rem] font-bold text-slate-500 uppercase">Current Sync</span>
+                    <div class="text-lg font-bold text-cyan-400">88.20 SYNC</div>
+                </div>
+                <div class="glass p-5 rounded-[28px] border-l-2 border-l-white/20">
+                    <span class="text-[0.4rem] font-bold text-slate-500 uppercase">Tier Rank</span>
+                    <div class="text-lg font-bold text-white">Founder</div>
+                </div>
+            </div>
+        </main>
+
+        <!-- STRATEGY VIEW -->
+        <main id="view-plan" class="hidden flex-1 flex flex-col px-8 pt-4">
+            <div class="glass p-6 rounded-[32px] border-white/5 space-y-6">
+                <div>
+                    <h3 class="text-gold text-xs font-black uppercase tracking-widest mb-3">80% Soul Margin Protocol</h3>
+                    <p class="text-[0.7rem] text-slate-400 leading-relaxed">
+                        Manufacturing Target: $4.85<br>
+                        Retail Target: $24.00<br>
+                        Status: Calibration Active
+                    </p>
+                </div>
+                <div class="h-[1px] bg-white/10"></div>
+                <div>
+                    <h3 class="text-cyan-400 text-xs font-black uppercase tracking-widest mb-3">Roadmap Phase 1</h3>
+                    <ul class="space-y-3 text-[0.65rem] text-slate-300">
+                        <li class="flex gap-2"><span>●</span> Artifact V1 Correction</li>
+                        <li class="flex gap-2"><span>●</span> US Manufacturing Pipeline</li>
+                        <li class="flex gap-2"><span>●</span> Equity Ledger Syncing</li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+
+        <nav class="dock glass">
+            <button onclick="nav('mirror')" class="dock-item active" id="nav-mirror">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                <span>Mirror</span>
+            </button>
+            <button onclick="nav('vault')" class="dock-item" id="nav-vault">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V7a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                <span>Vault</span>
+            </button>
+            <button onclick="nav('plan')" class="dock-item" id="nav-plan">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                <span>Plan</span>
+            </button>
+        </nav>
+    </div>
+
+    <script>
+        let equity = 4.25;
+        let stream = null;
+
+        function nav(view) {
+            document.querySelectorAll('main').forEach(m => m.classList.add('hidden'));
+            document.getElementById('view-' + view).classList.remove('hidden');
+            document.querySelectorAll('.dock-item').forEach(i => i.classList.remove('active'));
+            document.getElementById('nav-' + view).classList.add('active');
+            
+            const titles = { mirror: 'The Mirror', vault: 'Rooted Vault', plan: 'Strategy' };
+            document.getElementById('view-title').innerText = titles[view];
+        }
+
+        async function openCamera() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+                document.getElementById('video').srcObject = stream;
+                document.getElementById('camera-overlay').style.display = 'flex';
+            } catch (err) {
+                document.getElementById('camera-overlay').style.display = 'flex';
+                console.warn("Handshake simulation active.");
+            }
+        }
+
+        function closeCamera() {
+            if (stream) stream.getTracks().forEach(t => t.stop());
+            document.getElementById('camera-overlay').style.display = 'none';
+        }
+
+        function captureRitual() {
+            equity += 0.01;
+            document.getElementById('equity-display').innerText = equity.toFixed(2) + '%';
+            closeCamera();
+            nav('vault');
+        }
+    </script>
+</body>
+</html>
